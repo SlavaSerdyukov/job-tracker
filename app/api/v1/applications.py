@@ -36,8 +36,7 @@ def applications_stats(
     )
 
     rows = (
-        base_query
-        .order_by(None)
+        base_query.order_by(None)
         .with_entities(Application.status, func.count(Application.id))
         .group_by(Application.status)
         .all()

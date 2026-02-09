@@ -3,7 +3,6 @@ from sqlalchemy.orm import Query, Session
 
 from app.models.application import Application, ApplicationStatus
 
-
 SORT_FIELDS: set[str] = {
     "created_at",
     "updated_at",
@@ -56,11 +55,6 @@ def apply_sort(query: Query, sort: str) -> Query:
 def paginate(query: Query, *, page: int, page_size: int) -> tuple[list[Application], int]:
     total = query.order_by(None).count()
 
-    items = (
-        query
-        .offset((page - 1) * page_size)
-        .limit(page_size)
-        .all()
-    )
+    items = query.offset((page - 1) * page_size).limit(page_size).all()
 
     return items, total

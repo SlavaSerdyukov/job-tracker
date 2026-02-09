@@ -24,10 +24,7 @@ class ApplicationStatus(enum.StrEnum):
 class Application(Base):
     __tablename__ = "applications"
     __table_args__ = (
-        UniqueConstraint(
-            "user_id", "company_name", "position",
-            name="uq_user_company_position"
-        ),
+        UniqueConstraint("user_id", "company_name", "position", name="uq_user_company_position"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -37,8 +34,6 @@ class Application(Base):
     status: Mapped[ApplicationStatus] = mapped_column(
         Enum(ApplicationStatus), default=ApplicationStatus.applied
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User")
