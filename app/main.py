@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from app.api.v1.applications import router as applications_router
 from app.api.v1.application_events import router as timeline_router
+from app.api.v1.applications import router as applications_router
 from app.api.v1.applications_analytics import (
     router as applications_analytics_router,
 )

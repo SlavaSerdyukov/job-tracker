@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import Select, func, or_, select
 from sqlalchemy.exc import IntegrityError
@@ -172,7 +172,7 @@ def get_due_followups(
     user_id: int,
     days: int = 3,
 ) -> list[Application]:
-    deadline = datetime.now(timezone.utc) + timedelta(days=days)
+    deadline = datetime.now(UTC) + timedelta(days=days)
 
     stmt = (
         select(Application)
@@ -204,7 +204,7 @@ def update_application(
     if "status" in data:
         data["status"] = apply_status_flow(application.status, data["status"])
         if data["status"] != old_status:
-            data["status_updated_at"] = datetime.now(timezone.utc)
+            data["status_updated_at"] = datetime.now(UTC)
 
     for key, value in data.items():
         setattr(application, key, value)

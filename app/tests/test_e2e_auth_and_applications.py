@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 
 def test_e2e_register_login_and_crud(client):
@@ -10,7 +10,7 @@ def test_e2e_register_login_and_crud(client):
     token = r.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
 
-    follow_up_at = (datetime.now(timezone.utc) + timedelta(days=1)).isoformat()
+    follow_up_at = (datetime.now(UTC) + timedelta(days=1)).isoformat()
 
     r = client.post(
         "/api/v1/applications",
@@ -89,7 +89,7 @@ def test_e2e_register_login_and_crud(client):
     assert r.json()["status"] == "screening"
 
     next_follow_up_at = (
-        datetime.now(timezone.utc) + timedelta(days=2)
+        datetime.now(UTC) + timedelta(days=2)
     ).isoformat()
     r = client.patch(
         f"/api/v1/applications/{app_id}",

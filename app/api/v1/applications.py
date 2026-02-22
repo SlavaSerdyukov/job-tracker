@@ -19,8 +19,8 @@ from app.services.application_analytics_service import (
 from app.services.application_service import (
     create_application,
     delete_application,
-    get_application_conflict_detail,
     get_application_by_id,
+    get_application_conflict_detail,
     get_due_followups,
     get_user_applications,
     update_application,
