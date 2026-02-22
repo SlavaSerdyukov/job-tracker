@@ -15,8 +15,8 @@ jobs:
           python-version: "3.11"
 
       - run: pip install -U pip
-      - run: pip install .
-      - run: pip install pytest ruff
+      - run: pip install ".[dev]"
+      - run: pip install httpx
 
       - run: ruff check .
       - run: pytest

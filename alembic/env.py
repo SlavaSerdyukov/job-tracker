@@ -1,8 +1,9 @@
-from sqlalchemy import engine_from_config, pool
-
 import app.models.application
+import app.models.application_event
 import app.models.user
 from alembic import context
+from sqlalchemy import engine_from_config, pool
+
 from app.core.config import settings
 from app.models.base import Base
 

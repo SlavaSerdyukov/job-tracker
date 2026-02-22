@@ -16,7 +16,11 @@ def get_current_user(
     token: str = Depends(oauth2_scheme),
 ) -> User:
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            algorithms=[ALGORITHM],
+        )
         email: str | None = payload.get("sub")
         if not email:
             raise ValueError
