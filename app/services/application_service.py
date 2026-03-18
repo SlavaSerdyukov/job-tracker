@@ -75,7 +75,11 @@ def create_application(
     user_id: int,
     payload: ApplicationCreate,
 ) -> Application:
-    application = Application(user_id=user_id, **payload.model_dump())
+    application = Application(
+        user_id=user_id,
+        status_updated_at=datetime.utcnow(),
+        **payload.model_dump(),
+    )
     db.add(application)
     db.commit()
     db.refresh(application)
@@ -204,7 +208,7 @@ def update_application(
     if "status" in data:
         data["status"] = apply_status_flow(application.status, data["status"])
         if data["status"] != old_status:
-            data["status_updated_at"] = datetime.now(UTC)
+            data["status_updated_at"] = datetime.utcnow()
 
     for key, value in data.items():
         setattr(application, key, value)

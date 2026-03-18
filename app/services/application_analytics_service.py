@@ -15,6 +15,22 @@ FUNNEL_STEPS = [
 ]
 
 
+def normalize_status(status: ApplicationStatus | str) -> ApplicationStatus:
+    if isinstance(status, ApplicationStatus):
+        return status
+    return ApplicationStatus(status)
+
+
+def status_count_rows_to_dict(
+    rows: list[tuple[ApplicationStatus | str, int]],
+) -> dict[ApplicationStatus, int]:
+    counts: dict[ApplicationStatus, int] = {}
+    for status_value, count in rows:
+        normalized_status = normalize_status(status_value)
+        counts[normalized_status] = int(count)
+    return counts
+
+
 def get_applications_summary(*, db: Session, user_id: int) -> dict:
     stmt = (
         select(Application.status, func.count(Application.id))
@@ -22,8 +38,7 @@ def get_applications_summary(*, db: Session, user_id: int) -> dict:
         .group_by(Application.status)
     )
     rows = db.execute(stmt).all()
-
-    counts_by_status = {status: count for status, count in rows}
+    counts_by_status = status_count_rows_to_dict(rows)
 
     return {
         "total": sum(counts_by_status.values()),
@@ -56,10 +71,12 @@ def get_time_to_status(*, db: Session, user_id: int) -> dict:
     )
     rows = db.execute(stmt).all()
 
-    avg_days_by_status = {
-        status: float(avg_days) if avg_days is not None else None
-        for status, avg_days in rows
-    }
+    avg_days_by_status: dict[ApplicationStatus, float | None] = {}
+    for status_value, avg_days in rows:
+        normalized_status = normalize_status(status_value)
+        avg_days_by_status[normalized_status] = (
+            float(avg_days) if avg_days is not None else None
+        )
 
     return {
         "metrics": [
@@ -98,7 +115,8 @@ def get_status_duration_metrics(*, db: Session, user_id: int) -> dict:
     }
     last_by_application: dict[int, tuple[ApplicationStatus, datetime]] = {}
 
-    for application_id, to_status, created_at in rows:
+    for application_id, to_status_value, created_at in rows:
+        normalized_to_status = normalize_status(to_status_value)
         if application_id in last_by_application:
             prev_status, prev_created_at = last_by_application[application_id]
             delta_days = (
@@ -106,7 +124,10 @@ def get_status_duration_metrics(*, db: Session, user_id: int) -> dict:
             ).total_seconds() / 86400.0
             if delta_days >= 0:
                 durations_by_status[prev_status].append(delta_days)
-        last_by_application[application_id] = (to_status, created_at)
+        last_by_application[application_id] = (
+            normalized_to_status,
+            created_at,
+        )
 
     return {
         "metrics": [
@@ -134,8 +155,7 @@ def get_funnel(*, db: Session, user_id: int) -> dict:
         .group_by(Application.status)
     )
     rows = db.execute(stmt).all()
-
-    exact_counts = {status: count for status, count in rows}
+    exact_counts = status_count_rows_to_dict(rows)
 
     cumulative: dict[ApplicationStatus, int] = {}
     running_total = 0
@@ -203,12 +223,13 @@ def get_recruiter_performance_v2(*, db: Session, user_id: int) -> dict:
     status_rows = db.execute(status_stmt).all()
 
     status_counts_by_recruiter: dict[str, dict[ApplicationStatus, int]] = {}
-    for recruiter_email, status, count in status_rows:
+    for recruiter_email, status_value, count in status_rows:
+        normalized_status = normalize_status(status_value)
         recruiter_counts = status_counts_by_recruiter.setdefault(
             recruiter_email,
             {},
         )
-        recruiter_counts[status] = int(count)
+        recruiter_counts[normalized_status] = int(count)
 
     last_contacted_column = getattr(Application, "last_contacted_at", None)
     if last_contacted_column is not None:

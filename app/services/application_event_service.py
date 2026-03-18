@@ -14,7 +14,7 @@ def create_event(
     from_status: ApplicationStatus | None = None,
     to_status: ApplicationStatus | None = None,
     note: str | None = None,
-) -> ApplicationEvent:
+) -> ApplicationEvent | None:
     if event_type == ApplicationEventType.follow_up:
         application = db.get(Application, application_id)
         if application is None or application.follow_up_at is None:
