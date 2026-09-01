@@ -2,6 +2,12 @@
 
 Full-stack job application tracker with a FastAPI backend and React dashboard.
 
+## Live Demo
+
+- App: https://job-tracker-production-ca42.up.railway.app
+- Swagger UI: https://job-tracker-production-ca42.up.railway.app/docs
+- Health check: https://job-tracker-production-ca42.up.railway.app/health
+
 ## Features
 - JWT authentication
 - Applications CRUD
@@ -15,7 +21,7 @@ Full-stack job application tracker with a FastAPI backend and React dashboard.
 
 **Backend:** FastAPI, SQLAlchemy, PostgreSQL, Alembic, Pydantic, pytest  
 **Frontend:** React, Vite, TypeScript, TanStack Query, Recharts  
-**Delivery:** Docker, GitHub Actions
+**Delivery:** Docker, GitHub Actions, Railway
 
 ## Local Development
 
@@ -30,6 +36,8 @@ Start PostgreSQL and the API:
 ```bash
 docker compose up --build
 ```
+
+Docker Compose waits for PostgreSQL to become healthy before starting the API and running migrations.
 
 In a second terminal, start the frontend development server:
 
@@ -59,7 +67,7 @@ DATABASE_URL=postgresql://user:password@host:5432/database
 ### Railway
 
 1. Create a Railway project from this GitHub repository.
-2. Add a PostgreSQL database to the project.
+2. Add a PostgreSQL database to the same project.
 3. Set `SECRET_KEY` to a strong random value.
 4. Set `DATABASE_URL` to the PostgreSQL service connection variable/reference.
 5. Deploy the repository. Railway detects the Dockerfile automatically.
@@ -72,6 +80,8 @@ Useful endpoints after deployment:
 - `/docs` - Swagger / OpenAPI documentation
 - `/health` - health check
 - `/api/v1/...` - REST API
+
+Unknown `/api/...` routes return JSON `404` responses instead of falling through to the React SPA.
 
 ## Demo Flow
 
