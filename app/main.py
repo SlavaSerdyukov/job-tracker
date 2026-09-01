@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -42,6 +42,9 @@ def frontend_root():
 
 @app.get("/{full_path:path}", include_in_schema=False)
 def frontend_spa(full_path: str):
+    if full_path == "api" or full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not Found")
+
     index_file = frontend_dist / "index.html"
     if index_file.exists():
         return FileResponse(index_file)
