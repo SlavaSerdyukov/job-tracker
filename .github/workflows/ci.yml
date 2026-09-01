@@ -7,6 +7,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: test-only-ci-secret
     steps:
       - uses: actions/checkout@v4
 
