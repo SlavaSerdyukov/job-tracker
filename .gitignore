@@ -7,8 +7,11 @@ __pycache__/
 
 # Virtual environment
 venv/
-.env/
+
+# Environment / secrets
+.env
 .env.*
+!.env.example
 
 # IDE
 .vscode/
@@ -29,7 +32,6 @@ dist/
 *.egg-info/
 frontend/node_modules/
 frontend/dist/
-frontend/.env*
 frontend/*.tsbuildinfo
 frontend/vite.config.js
 frontend/vite.config.d.ts
@@ -37,10 +39,5 @@ frontend/vite.config.d.ts
 # Alembic cache
 alembic/versions/__pycache__/
 
-# Docker
+# Docker / logs
 *.log
-
-# Secrets
-.env.local
-.env.dev
-.env.prod
